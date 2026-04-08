@@ -1,101 +1,209 @@
-const API="http://127.0.0.1:8000"
+const API = "http://127.0.0.1:8000";
 
-async function submitContact(){
+/* =========================
+   CONTACT FORM
+========================= */
 
-const name=document.getElementById("name").value
-const email=document.getElementById("email").value
-const message=document.getElementById("message").value
+async function submitContact() {
 
-if(!name || !email || !message){
-alert("All fields required")
-return
+let name = document.getElementById("name").value.trim();
+let email = document.getElementById("email").value.trim();
+let message = document.getElementById("message").value.trim();
+
+if (!name || !email || !message) {
+alert("Please fill all fields");
+return;
 }
 
-const res=await fetch(API+"/submit-contact",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
+try {
+
+let res = await fetch(API + "/submit-contact", {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
 },
-body:JSON.stringify({
-name:name,
-email:email,
-message:message
-})
-})
+body: JSON.stringify({ name, email, message })
+});
 
-const data=await res.json()
+if (res.ok) {
 
-alert(data.message)
+showSuccess("successMessage", "Request submitted successfully!");
 
-document.getElementById("name").value=""
-document.getElementById("email").value=""
-document.getElementById("message").value=""
+document.getElementById("name").value = "";
+document.getElementById("email").value = "";
+document.getElementById("message").value = "";
+
+} else {
+
+alert("Something went wrong");
+
 }
 
-async function loadContacts(){
+} catch (err) {
 
-const res=await fetch(API+"/contacts")
+alert("Server connection failed");
 
-const contacts=await res.json()
+}
 
-const table=document.getElementById("contactTable")
+}
 
-table.innerHTML=""
 
-contacts.forEach(c=>{
+/* =========================
+   ADMIN TABLE
+========================= */
 
-const row=document.createElement("tr")
+async function loadContacts() {
 
-row.innerHTML=`
-<td>${c.id}</td>
+try {
+
+let res = await fetch(API + "/contacts");
+let data = await res.json();
+
+let table = document.getElementById("contactTable");
+
+if (!table) return;
+
+table.innerHTML = "";
+
+data.forEach(c => {
+
+table.innerHTML += `
+
+<tr class="border-b hover:bg-gray-50">
+
+<td class="p-3">${c.id}</td>
 <td>${c.name}</td>
 <td>${c.email}</td>
 <td>${c.message}</td>
+
 <td>
-<button onclick="deleteContact(${c.id})">Delete</button>
+<button onclick="deleteContact(${c.id})"
+class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition">
+
+Delete
+
+</button>
 </td>
-`
 
-table.appendChild(row)
+</tr>
 
-})
+`;
 
-}
+});
 
-async function deleteContact(id){
+updateStats(data);
 
-await fetch(API+"/contacts/"+id,{
-method:"DELETE"
-})
+} catch (err) {
 
-loadContacts()
+console.error("Failed to load contacts");
 
 }
 
-async function login(){
+}
 
-const username=document.getElementById("username").value
-const password=document.getElementById("password").value
 
-const res=await fetch(API+"/login",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
+/* =========================
+   DELETE CONTACT
+========================= */
+
+async function deleteContact(id) {
+
+let confirmDelete = confirm("Delete this message?");
+
+if (!confirmDelete) return;
+
+await fetch(API + "/contacts/" + id, {
+method: "DELETE"
+});
+
+loadContacts();
+
+}
+
+
+/* =========================
+   LOGIN
+========================= */
+
+async function login() {
+
+let username = document.getElementById("username").value.trim();
+let password = document.getElementById("password").value.trim();
+
+if (!username || !password) {
+alert("Enter username and password");
+return;
+}
+
+try {
+
+let res = await fetch(API + "/login", {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
 },
-body:JSON.stringify({
-username:username,
-password:password
-})
-})
+body: JSON.stringify({ username, password })
+});
 
-if(res.status===200){
+if (res.status === 200) {
 
-window.location.href="admin.html"
+window.location.href = "/admin";
 
-}else{
+} else {
 
-alert("Invalid credentials")
+showError("loginError", "Invalid username or password");
 
+}
+
+} catch (err) {
+
+alert("Server error");
+
+}
+
+}
+
+
+/* =========================
+   UI HELPERS
+========================= */
+
+function showSuccess(id, message) {
+
+let box = document.getElementById(id);
+
+if (!box) return;
+
+box.innerText = message;
+
+box.classList.remove("hidden");
+
+setTimeout(() => {
+box.classList.add("hidden");
+}, 3000);
+
+}
+
+
+function showError(id, message) {
+
+let box = document.getElementById(id);
+
+if (!box) return;
+
+box.innerText = message;
+
+box.classList.remove("hidden");
+
+}
+
+
+function updateStats(data) {
+
+let total = document.getElementById("totalMessages");
+
+if (total) {
+total.innerText = data.length;
 }
 
 }

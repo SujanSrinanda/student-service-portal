@@ -1,28 +1,115 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+
 <title>Admin Login</title>
-<link rel="stylesheet" href="style.css">
-<script src="script.js"></script>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script src="/static/script.js"></script>
+
 </head>
 
-<body>
 
-<nav>
-<a href="home.html">Home</a>
-</nav>
+<body class="bg-gray-100 min-h-screen flex">
 
-<div class="container">
+<!-- LEFT PANEL -->
 
-<h2>Admin Login</h2>
+<div class="hidden md:flex w-1/2 bg-gradient-to-br from-slate-900 to-slate-700 text-white items-center justify-center p-10">
 
-<input id="username" placeholder="Username">
+<div class="max-w-md text-center">
 
-<input id="password" type="password" placeholder="Password">
+<h1 class="text-4xl font-semibold mb-6">
+Student Service Portal
+</h1>
 
-<button onclick="login()">Login</button>
+<p class="text-gray-300">
+Administrator dashboard for managing student service requests and monitoring support messages.
+</p>
 
 </div>
+
+</div>
+
+
+
+<!-- LOGIN FORM -->
+
+<div class="flex flex-1 items-center justify-center p-6">
+
+<div class="bg-white p-10 rounded-xl shadow-xl w-full max-w-md">
+
+<h2 class="text-2xl font-semibold mb-6 text-center">
+Admin Login
+</h2>
+
+
+<!-- ERROR MESSAGE -->
+
+<div id="loginError"
+class="hidden bg-red-100 text-red-600 text-sm p-3 rounded mb-4 text-center">
+
+Invalid username or password
+
+</div>
+
+
+<!-- USERNAME -->
+
+<label class="text-sm text-gray-600">
+Username
+</label>
+
+<input
+id="username"
+placeholder="Enter username"
+class="w-full border border-gray-300 p-3 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-sky-400"
+/>
+
+
+
+<!-- PASSWORD -->
+
+<label class="text-sm text-gray-600">
+Password
+</label>
+
+<input
+id="password"
+type="password"
+placeholder="Enter password"
+class="w-full border border-gray-300 p-3 rounded mb-6 focus:outline-none focus:ring-2 focus:ring-sky-400"
+/>
+
+
+
+<!-- LOGIN BUTTON -->
+
+<button
+onclick="login()"
+class="w-full bg-sky-500 text-white py-3 rounded-lg hover:bg-sky-600 transition">
+
+Login
+
+</button>
+
+
+
+<!-- BACK LINK -->
+
+<div class="text-center mt-6 text-sm">
+
+<a href="/" class="text-sky-500 hover:underline">
+← Back to Home
+</a>
+
+</div>
+
+</div>
+
+</div>
+
 
 </body>
 </html>

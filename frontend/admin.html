@@ -1,38 +1,145 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>Admin Panel</title>
-<link rel="stylesheet" href="style.css">
-<script src="script.js"></script>
+
+<title>Admin Dashboard</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script src="/static/script.js"></script>
+
 </head>
 
-<body onload="loadContacts()">
 
-<nav>
-<a href="home.html">Home</a>
+<body onload="loadContacts()" class="bg-gray-100 flex">
+
+<!-- SIDEBAR -->
+
+<aside class="w-64 bg-slate-900 text-white min-h-screen p-6">
+
+<h1 class="text-2xl font-semibold mb-10">
+Student Portal
+</h1>
+
+<nav class="space-y-4 text-sm">
+
+<a href="/" class="block hover:text-sky-400">
+Home
+</a>
+
+<a href="/services" class="block hover:text-sky-400">
+Services
+</a>
+
+<a href="/about" class="block hover:text-sky-400">
+About
+</a>
+
+<a href="/contact" class="block hover:text-sky-400">
+Contact
+</a>
+
 </nav>
 
-<div class="container">
+</aside>
 
-<h2>Contact Submissions</h2>
 
-<table>
+
+<!-- MAIN CONTENT -->
+
+<main class="flex-1 p-10">
+
+<h1 class="text-3xl font-semibold mb-8">
+Admin Dashboard
+</h1>
+
+
+<!-- STATS CARDS -->
+
+<div class="grid md:grid-cols-3 gap-6 mb-10">
+
+<div class="bg-white p-6 rounded-xl shadow">
+
+<p class="text-gray-500 text-sm">
+Total Messages
+</p>
+
+<h2 id="totalMessages" class="text-3xl font-semibold text-sky-500">
+0
+</h2>
+
+</div>
+
+
+<div class="bg-white p-6 rounded-xl shadow">
+
+<p class="text-gray-500 text-sm">
+Support Requests
+</p>
+
+<h2 class="text-3xl font-semibold text-sky-500">
+Active
+</h2>
+
+</div>
+
+
+<div class="bg-white p-6 rounded-xl shadow">
+
+<p class="text-gray-500 text-sm">
+System Status
+</p>
+
+<h2 class="text-3xl font-semibold text-green-500">
+Online
+</h2>
+
+</div>
+
+</div>
+
+
+
+<!-- CONTACT TABLE -->
+
+<div class="bg-white shadow rounded-xl overflow-hidden">
+
+<div class="px-6 py-4 border-b">
+
+<h2 class="text-lg font-semibold">
+Contact Messages
+</h2>
+
+</div>
+
+
+<table class="w-full text-sm">
+
+<thead class="bg-sky-500 text-white">
 
 <tr>
-<th>ID</th>
-<th>Name</th>
-<th>Email</th>
-<th>Message</th>
-<th>Action</th>
+
+<th class="p-4 text-left">ID</th>
+<th class="text-left">Name</th>
+<th class="text-left">Email</th>
+<th class="text-left">Message</th>
+<th class="text-left">Action</th>
+
 </tr>
 
-<tbody id="contactTable">
+</thead>
 
-</tbody>
+
+<tbody id="contactTable" class="divide-y"></tbody>
 
 </table>
 
 </div>
 
+
+</main>
+
 </body>
+
 </html>

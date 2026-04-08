@@ -1,12 +1,17 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import json
 import os
 
-app = FastAPI(title="Student Service Portal API")
+app = FastAPI(title="Student Service Portal")
 
+# -----------------------------
 # Enable CORS
+# -----------------------------
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -15,11 +20,27 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-DB_FILE = "contacts.json"
+# -----------------------------
+# Paths
+# -----------------------------
 
-# ----------------------------
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+FRONTEND_DIR = os.path.abspath(
+    os.path.join(BASE_DIR, "..", "frontend")
+)
+
+DB_FILE = os.path.join(BASE_DIR, "contacts.json")
+
+# -----------------------------
+# Serve Static Files (CSS + JS)
+# -----------------------------
+
+app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
+
+# -----------------------------
 # Models
-# ----------------------------
+# -----------------------------
 
 class Contact(BaseModel):
     name: str
@@ -32,9 +53,9 @@ class Login(BaseModel):
     password: str
 
 
-# ----------------------------
-# Utility Functions
-# ----------------------------
+# -----------------------------
+# Database Helpers
+# -----------------------------
 
 def read_contacts():
     with open(DB_FILE, "r") as f:
@@ -46,23 +67,45 @@ def write_contacts(data):
         json.dump(data, f, indent=4)
 
 
-# Create DB file if not exists
 if not os.path.exists(DB_FILE):
     write_contacts([])
 
-
-# ----------------------------
-# Root API
-# ----------------------------
+# -----------------------------
+# Frontend Pages
+# -----------------------------
 
 @app.get("/")
-def root():
-    return {"message": "Student Service Portal API Running"}
+def home():
+    return FileResponse(os.path.join(FRONTEND_DIR, "home.html"))
 
 
-# ----------------------------
-# Submit Contact
-# ----------------------------
+@app.get("/about")
+def about():
+    return FileResponse(os.path.join(FRONTEND_DIR, "about.html"))
+
+
+@app.get("/services")
+def services():
+    return FileResponse(os.path.join(FRONTEND_DIR, "services.html"))
+
+
+@app.get("/contact")
+def contact():
+    return FileResponse(os.path.join(FRONTEND_DIR, "contact.html"))
+
+
+@app.get("/login")
+def login_page():
+    return FileResponse(os.path.join(FRONTEND_DIR, "login.html"))
+
+
+@app.get("/admin")
+def admin_page():
+    return FileResponse(os.path.join(FRONTEND_DIR, "admin.html"))
+
+# -----------------------------
+# API: Submit Contact
+# -----------------------------
 
 @app.post("/submit-contact")
 def submit_contact(contact: Contact):
@@ -80,21 +123,19 @@ def submit_contact(contact: Contact):
 
     write_contacts(contacts)
 
-    return {"message": "Contact submitted successfully", "data": new_contact}
+    return {"message": "Contact submitted successfully"}
 
-
-# ----------------------------
-# Get All Contacts
-# ----------------------------
+# -----------------------------
+# API: Get All Contacts
+# -----------------------------
 
 @app.get("/contacts")
 def get_contacts():
     return read_contacts()
 
-
-# ----------------------------
-# Get Contact by ID
-# ----------------------------
+# -----------------------------
+# API: Get Contact by ID
+# -----------------------------
 
 @app.get("/contacts/{contact_id}")
 def get_contact(contact_id: int):
@@ -107,10 +148,9 @@ def get_contact(contact_id: int):
 
     raise HTTPException(status_code=404, detail="Contact not found")
 
-
-# ----------------------------
-# Update Contact
-# ----------------------------
+# -----------------------------
+# API: Update Contact
+# -----------------------------
 
 @app.put("/contacts/{contact_id}")
 def update_contact(contact_id: int, updated_contact: Contact):
@@ -118,7 +158,6 @@ def update_contact(contact_id: int, updated_contact: Contact):
     contacts = read_contacts()
 
     for contact in contacts:
-
         if contact["id"] == contact_id:
 
             contact["name"] = updated_contact.name
@@ -127,14 +166,13 @@ def update_contact(contact_id: int, updated_contact: Contact):
 
             write_contacts(contacts)
 
-            return {"message": "Contact updated successfully", "data": contact}
+            return {"message": "Contact updated successfully"}
 
     raise HTTPException(status_code=404, detail="Contact not found")
 
-
-# ----------------------------
-# Delete Contact
-# ----------------------------
+# -----------------------------
+# API: Delete Contact
+# -----------------------------
 
 @app.delete("/contacts/{contact_id}")
 def delete_contact(contact_id: int):
@@ -142,7 +180,6 @@ def delete_contact(contact_id: int):
     contacts = read_contacts()
 
     for contact in contacts:
-
         if contact["id"] == contact_id:
 
             contacts.remove(contact)
@@ -153,16 +190,15 @@ def delete_contact(contact_id: int):
 
     raise HTTPException(status_code=404, detail="Contact not found")
 
-
-# ----------------------------
-# Admin Login
-# ----------------------------
+# -----------------------------
+# API: Admin Login
+# -----------------------------
 
 @app.post("/login")
 def login(credentials: Login):
 
-    ADMIN_USER = "admin"
-    ADMIN_PASS = "admin123"
+    ADMIN_USER = "SUJAN"
+    ADMIN_PASS = "123456"
 
     if credentials.username == "SUJAN" and credentials.password == "123456":
         return {"message": "Login successful"}
